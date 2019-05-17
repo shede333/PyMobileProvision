@@ -102,3 +102,16 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# PyCharm
+# http://www.jetbrains.com/pycharm/webhelp/project.html
+.idea
+.iml
+
+.DS_Store
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
