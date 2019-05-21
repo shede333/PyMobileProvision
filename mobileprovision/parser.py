@@ -37,3 +37,15 @@ def plist_obj(file_path):
     """
     xml_content = content(file_path)
     return plistlib.readPlistFromString(xml_content)
+
+
+def convert_plist_file(mp_file_path, dst_file_path):
+    """
+    转换为plist文件
+    :param mp_file_path: mobileprovision文件路径
+    :param dst_file_path: 转换后得到的plist文件路径
+    :return:
+    """
+    xml_content = content(mp_file_path)
+    with open(dst_file_path, "wb") as fp:
+        fp.write(xml_content)
