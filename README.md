@@ -25,3 +25,8 @@ print parser.plist_obj(mp_file_path)
 
 ```
 
+## 待完成的功能
+
+* 增加pytest标准测试；
+* 增加mp等测试资源；
+* 增加CLI控制功能；
