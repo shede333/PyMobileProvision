@@ -5,7 +5,8 @@ __author__ = 'wangshaowei'
 """
 
 import os
-import subprocess
+import shutil
+import stat
 
 from . import parser
 
@@ -32,9 +33,12 @@ def import_mobileprovision(mp_file_path, is_replace=False):
     :param is_replace: 是否删除相同"Name"属性的文件，默认False
     :return:
     """
+    mp_ext_name = parser.mp_ext_name
     mp_home_dir = parser.mp_home_dir
     current_mp = parser.plist_obj(mp_file_path)
     current_name = current_mp["Name"]
+    current_uuid = current_mp["UUID"]
+    print("开始导入mobileprovision 文件：")
 
     # 删除同name的mp文件
     has_same_name = False  # 是否有同Name的文件
@@ -49,6 +53,11 @@ def import_mobileprovision(mp_file_path, is_replace=False):
         print("* 没有同Name({})的mobileprovision文件".format(current_name))
 
     # 导入新的 mobileprovision 文件
-    command = "open '{}'".format(mp_file_path)
-    subprocess.call(command, shell=True)
-    print("+ 导入mobileprovision: {}\n".format(command))
+    if not os.path.isdir(mp_home_dir):
+        os.makedirs(mp_home_dir)
+    file_name = "{}{}".format(current_uuid, mp_ext_name)
+    dst_path = os.path.join(mp_home_dir, file_name)
+    shutil.copy(mp_file_path, dst_path)
+    # 修改文件权限"-rw-r--r-- "
+    os.chmod(dst_path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
+    print("+ 成功导入mobileprovision: \n\tfrom: {}\n\tto: {}".format(mp_file_path, dst_path))
