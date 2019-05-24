@@ -48,9 +48,9 @@ def import_mobileprovision(mp_file_path, is_replace=False):
         if is_replace and (current_name == tmp_name):
             has_same_name = True
             os.remove(file_path)
-            print("- 删除文件:", file_path)
+            print("\t- 删除文件:", file_path)
     if is_replace and (not has_same_name):
-        print("* 没有同Name({})的mobileprovision文件".format(current_name))
+        print("\t* 没有同Name({})的mobileprovision文件".format(current_name))
 
     # 导入新的 mobileprovision 文件
     if not os.path.isdir(mp_home_dir):
