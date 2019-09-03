@@ -9,7 +9,7 @@ parse ".mobileprovision" file in MacOS System;
 
 ```
 
-pip isntall PyMobileProvision
+pip install PyMobileProvision
 
 ```
 
