@@ -15,7 +15,7 @@ pip install PyMobileProvision
 
 ```
 
-## Example:
+## Example Modules:
 
 ```python
 
@@ -26,6 +26,29 @@ print parser.content(mp_file_path)
 print parser.plist_obj(mp_file_path)
 
 ```
+
+## Example CLI:
+
+```shell
+
+mobileprovision -h 
+
+输出：
+
+usage: OKEx工程里的多语言国际化相关的便捷操作 [-h] {test,import,parse,convert} ...
+
+positional arguments:
+  {test,import,parse,convert}
+                        支持的命令如下：
+    import              导入mobileprovision文件到系统默认路径里
+    parse               解析、打印mobileprovision文件里的内容
+    convert             转换mobileprovision文件为plist文件
+
+optional arguments:
+  -h, --help            show this help message and exit
+
+```
+
 
 ## 待完成的功能
 

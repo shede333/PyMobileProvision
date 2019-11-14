@@ -24,15 +24,19 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/shede333/PyMobileProvision',  # 包的主页
     packages=find_packages(),  # 包
-    include_package_data=True,
-    # package_data={'': ["**/*.mobileprovision", "*.txt"]},
+    entry_points={
+        'console_scripts': [
+            'mobileprovision=mobileprovision.command:main',
+        ],
+    },
     python_requires="~=3.4",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Natural Language :: Chinese (Simplified)",
         "License :: OSI Approved :: MIT License",
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: POSIX",
+        "Topic :: Software Development :: Libraries :: Python Modules",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.4",

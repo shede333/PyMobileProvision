@@ -27,34 +27,35 @@ def mp_path_in_dir(dir_path):
     return path_list
 
 
-def import_mobileprovision(mp_file_path, replace_at_attrs=None):
+def import_mobileprovision(mp_file_path, replace_at_attrs=('Name',)):
     """
     导入新的mobileprovision文件
     :param mp_file_path: mobileprovision文件路径
-    :param replace_at_attrs: 删除属性相同的文件，这里代表需要对比的属性列表，属性间为"或"的关系
+    :param replace_at_attrs: 删除属性相同的文件，这里代表需要对比的属性列表，属性间为"或"的关系，默认['Name']
     :return:
     """
     current_mp = parser.plist_obj(mp_file_path)
     current_uuid = current_mp["UUID"]
+    if isinstance(replace_at_attrs, str):
+        replace_at_attrs = [replace_at_attrs]  # 将字符串转为list
     replace_at_attrs = set(replace_at_attrs) if replace_at_attrs else None
     print("开始导入mobileprovision 文件：")
 
-    # 删除同name的mp文件
-    has_same_name = False  # 是否有同Name的文件
-    for file_path in mp_path_in_dir(MP_ROOT_PATH):
-        tmp_mp = parser.plist_obj(file_path)
-        if not replace_at_attrs:
-            continue
-        for tmp_key in replace_at_attrs:
-            tmp_value = tmp_mp.get(tmp_key, None)
-            current_value = current_mp.get(tmp_key, None)
-            if tmp_value and current_value and (tmp_value == current_value):
-                has_same_name = True
-                file_path.unlink()
-                print("\t- 删除文件:", file_path)
+    # 删除同属性的mp文件
+    has_same_attr = False  # 是否有同Name的文件
+    if replace_at_attrs:
+        for file_path in mp_path_in_dir(MP_ROOT_PATH):
+            tmp_mp = parser.plist_obj(file_path)
+            for tmp_key in replace_at_attrs:
+                tmp_value = tmp_mp.get(tmp_key, None)
+                current_value = current_mp.get(tmp_key, None)
+                if tmp_value and current_value and (tmp_value == current_value):
+                    has_same_attr = True
+                    file_path.unlink()
+                    print("\t- 删除文件:", file_path)
 
-    if replace_at_attrs and (not has_same_name):
-        print("\t* 没有相同属性({})的mobileprovision文件".format(replace_at_attrs))
+        if not has_same_attr:
+            print("\t* 没有相同属性({})的mobileprovision文件".format(replace_at_attrs))
 
     # 导入新的 mobileprovision 文件
     MP_ROOT_PATH.mkdir(parents=True, exist_ok=True)
