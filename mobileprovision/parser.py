@@ -1,15 +1,13 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 # _*_ coding:UTF-8 _*_
 """
 __author__ = 'shede333'
 """
 
-import os
 import plistlib
 import re
 
-mp_home_dir = os.path.expanduser("~/Library/MobileDevice/Provisioning Profiles")
-mp_ext_name = ".mobileprovision"
+from pathlib import Path
 
 
 def content(file_path):
@@ -18,12 +16,10 @@ def content(file_path):
     :param file_path: mobileprovision文件路径
     :return: plist部分的字符串内容
     """
-    with open(file_path, "rb") as fp:
-        file_content = fp.read()
-
     p_start = re.escape("<?xml")
     p_end = re.escape("</plist>")
     pattern_str = "{}.+{}".format(p_start, p_end)
+    file_content = Path(file_path).read_text(encoding="ascii", errors="ignore")
     result = re.search(pattern_str, file_content, flags=re.DOTALL)
     xml_content = result.group()
     return xml_content
@@ -36,7 +32,7 @@ def plist_obj(file_path):
     :return: plist对象
     """
     xml_content = content(file_path)
-    return plistlib.readPlistFromString(xml_content)
+    return plistlib.loads(bytes(xml_content, encoding="ascii"))
 
 
 def convert_plist_file(mp_file_path, dst_file_path):
@@ -47,5 +43,4 @@ def convert_plist_file(mp_file_path, dst_file_path):
     :return:
     """
     xml_content = content(mp_file_path)
-    with open(dst_file_path, "wb") as fp:
-        fp.write(xml_content)
+    Path(dst_file_path).open("w").write(xml_content)
