@@ -18,7 +18,7 @@ setup(
     version='1.0',  # 包版本
     author='shede333',  # 作者
     author_email='333wshw@163.com',  # 作者邮箱
-    keywords='mobileprovision mobile provision MobileProvision',
+    keywords='mobileprovision mobile provision MobileProvision profile profiles',
     description='Python3, parse ".mobileprovision" file in MacOS System;',  # 简单描述
     long_description=README,
     long_description_content_type='text/markdown',
