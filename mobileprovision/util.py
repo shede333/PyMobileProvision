@@ -8,7 +8,7 @@ import shutil
 import stat
 from pathlib import Path
 
-from . import parser
+from .parser import MobileProvisionModel
 
 MP_ROOT_PATH = Path("~/Library/MobileDevice/Provisioning Profiles").expanduser()
 MP_EXT_NAME = ".mobileprovision"
@@ -31,11 +31,10 @@ def import_mobileprovision(mp_file_path, replace_at_attrs=('Name',)):
     """
     导入新的mobileprovision文件
     :param mp_file_path: mobileprovision文件路径
-    :param replace_at_attrs: 删除属性相同的文件，这里代表需要对比的属性列表，属性间为"或"的关系，默认['Name']
+    :param replace_at_attrs: 删除属性相同的文件，这里代表需要对比的属性列表，属性间为"或"的关系，默认['Name']，不区分大小写
     :return:
     """
-    current_mp = parser.plist_obj(mp_file_path)
-    current_uuid = current_mp["UUID"]
+    mp_model = MobileProvisionModel(mp_file_path)
     if isinstance(replace_at_attrs, str):
         replace_at_attrs = [replace_at_attrs]  # 将字符串转为list
     replace_at_attrs = set(replace_at_attrs) if replace_at_attrs else None
@@ -45,10 +44,10 @@ def import_mobileprovision(mp_file_path, replace_at_attrs=('Name',)):
     has_same_attr = False  # 是否有同Name的文件
     if replace_at_attrs:
         for file_path in mp_path_in_dir(MP_ROOT_PATH):
-            tmp_mp = parser.plist_obj(file_path)
+            tmp_model = MobileProvisionModel(file_path)
             for tmp_key in replace_at_attrs:
-                tmp_value = tmp_mp.get(tmp_key, None)
-                current_value = current_mp.get(tmp_key, None)
+                tmp_value = tmp_model[tmp_key]
+                current_value = mp_model[tmp_key]
                 if tmp_value and current_value and (tmp_value == current_value):
                     has_same_attr = True
                     file_path.unlink()
@@ -59,7 +58,7 @@ def import_mobileprovision(mp_file_path, replace_at_attrs=('Name',)):
 
     # 导入新的 mobileprovision 文件
     MP_ROOT_PATH.mkdir(parents=True, exist_ok=True)
-    file_name = "{}{}".format(current_uuid, MP_EXT_NAME)
+    file_name = "{}{}".format(mp_model.uuid, MP_EXT_NAME)
     dst_path = MP_ROOT_PATH.joinpath(file_name)
     shutil.copy(mp_file_path, dst_path)
     # 修改文件权限"-rw-r--r-- "
