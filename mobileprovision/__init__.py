@@ -3,3 +3,5 @@
 """
 __author__ = 'shede333'
 """
+
+from .parser import MobileProvisionModel

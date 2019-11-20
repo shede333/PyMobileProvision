@@ -6,6 +6,8 @@ __author__ = 'shede333'
 
 import argparse
 
+from mobileprovision import MobileProvisionModel
+
 
 def import_mp(file_path, delete_repeat_name):
     from mobileprovision import util
@@ -14,18 +16,15 @@ def import_mp(file_path, delete_repeat_name):
 
 
 def parse_mp(file_path):
-    from mobileprovision.parser import MobileProvisionModel
     mp_model = MobileProvisionModel(file_path)
     print(mp_model)
 
 
 def convert_mp(file_path, dst_plist_path):
-    from mobileprovision.parser import MobileProvisionModel
     MobileProvisionModel(file_path).convert_to_plist_file(dst_plist_path)
 
 
 def entitlements(file_path, is_print, output_path):
-    from mobileprovision.parser import MobileProvisionModel
     mp_model = MobileProvisionModel(file_path)
     if is_print:
         import pprint
@@ -57,10 +56,12 @@ def parse_arg():
     convert_mp_parser.add_argument("file_path", help="mobileprovision文件路径")
     convert_mp_parser.add_argument("dst_plist_path", help="转换后的plist文件路径")
 
-    entitlements_parser = subparsers.add_parser("entitlements", help="打印/导出 mobileprovision文件里 entitlements信息")
+    entitlements_parser = subparsers.add_parser("entitlements",
+                                                help="打印/导出 mobileprovision文件里 entitlements信息")
     entitlements_parser.set_defaults(func=entitlements)
     entitlements_parser.add_argument("file_path", help="mobileprovision文件路径")
-    entitlements_parser.add_argument("-p", "--print", dest="is_print",action="store_true", help="打印entitlements信息")
+    entitlements_parser.add_argument("-p", "--print", dest="is_print", action="store_true",
+                                     help="打印entitlements信息")
     entitlements_parser.add_argument("-o", "--output-path", help="entitlements文件导出路径")
 
     args = parser.parse_args()

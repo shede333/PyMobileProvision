@@ -19,7 +19,7 @@ pip install PyMobileProvision
 
 ```python
 
-from mobileprovision.parser import MobileProvisionModel
+from mobileprovision import MobileProvisionModel
 
 mp_file_path = "/Users/shede333/Desktop/test.mobileprovision"
 mp_model = MobileProvisionModel(mp_file_path)

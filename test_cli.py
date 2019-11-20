@@ -9,7 +9,7 @@ import shutil
 from pathlib import Path
 
 from mobileprovision import util
-from mobileprovision.parser import MobileProvisionModel
+from mobileprovision import MobileProvisionModel
 
 RESOURCE_PATH = Path(__file__).resolve().parent.joinpath("resource")
 SRC_MP_PATH = RESOURCE_PATH.joinpath("sw-src.mobileprovision")
