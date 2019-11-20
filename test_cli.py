@@ -64,6 +64,7 @@ def test_cli_convert():
 def test_mp_property():
     from datetime import datetime
     from datetime import timezone
+    from datetime import timedelta
 
     mp_model = MobileProvisionModel(SRC_MP_PATH)
 
@@ -85,7 +86,8 @@ def test_mp_property():
     assert mp_model.date_is_valid == (datetime.utcnow() < mp_model.expiration_date)
     utc_dt = mp_model.creation_date.replace(tzinfo=timezone.utc)
     assert utc_dt.strftime("%Y-%m-%d %H:%M:%S") == "2019-11-19 09:27:50"
-    local_dt = mp_model.creation_date.replace(tzinfo=timezone.utc).astimezone()
+    tz_8h = timezone(timedelta(hours=8))  # 东八区
+    local_dt = mp_model.creation_date.replace(tzinfo=timezone.utc).astimezone(tz_8h)
     assert local_dt.strftime("%Y-%m-%d %H:%M:%S") == "2019-11-19 17:27:50"
 
     import tempfile
