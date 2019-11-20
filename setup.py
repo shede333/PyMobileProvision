@@ -29,7 +29,8 @@ setup(
             'mobileprovision=mobileprovision.command:main',
         ],
     },
-    python_requires="~=3.4",
+    install_requires=['cryptography~=2.8'],
+    python_requires="~=3.6",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Natural Language :: Chinese (Simplified)",
@@ -39,10 +40,9 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
     ],
 )
+

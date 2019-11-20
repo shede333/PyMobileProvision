@@ -19,6 +19,13 @@ class DevCertificateModel(object):
         self._sha256 = None
         self._sha1 = None
 
+    def __repr__(self):
+        # 使用cer证书内置的hash算法和对应的值
+        hash_algorithm = self.x509_cer.signature_hash_algorithm
+        hash_value = self.x509_cer.fingerprint(hash_algorithm).hex().upper()
+        return "Common Name: {}, {}: {}".format(self.common_name, hash_algorithm.name.upper(),
+                                                hash_value)
+
     @property
     def common_name(self):
         from cryptography.x509.oid import NameOID
@@ -61,6 +68,14 @@ class MobileProvisionModel(object):
 
     def __getitem__(self, item):
         return self._dict_info.get(item.lower(), None)
+
+    def __repr__(self):
+        import pprint
+        import copy
+        tmp_dict = dict(self._origin_info)
+        tmp_dict["DeveloperCertificates"] = self.developer_certificates
+
+        return pprint.pformat(tmp_dict)
 
     @property
     def app_id_name(self):
@@ -118,14 +133,14 @@ class MobileProvisionModel(object):
     @property
     def creation_date(self):
         """
-        :return: 证书的有效起始时间（datetime对象）
+        :return: 证书的有效起始时间（datetime对象, UTC时间）
         """
         return self["CreationDate"]
 
     @property
     def expiration_date(self):
         """
-        :return: 证书的有效截止时间（datetime对象）
+        :return: 证书的有效截止时间（datetime对象, UTC时间）
         """
         return self["ExpirationDate"]
 
@@ -136,7 +151,7 @@ class MobileProvisionModel(object):
         :return: 有效则返回true
         """
         from datetime import datetime
-        now_date = datetime.now()
+        now_date = datetime.utcnow()
         return (now_date > self.creation_date) and (now_date < self.expiration_date)
 
     @property
@@ -158,6 +173,7 @@ class MobileProvisionModel(object):
             dev_cer_list = []
             for tmp_cer_data in original_list:
                 cer_obj = x509.load_der_x509_certificate(tmp_cer_data, backend)
+                print(type(cer_obj.not_valid_after), cer_obj.not_valid_after)
                 dev_cer_list.append(DevCertificateModel(cer_obj))
             self._dev_cer_list = dev_cer_list
 
@@ -192,7 +208,7 @@ class MobileProvisionModel(object):
             security cms -D -i embedded.mobileprovision > temp.plist  # 先把mp文件转为plist文件
             /usr/libexec/PlistBuddy -x -c 'Print :Entitlements' temp.plist > entitlements.plist
 
-        :param dst_path:
+        :param dst_path: 导出的entitlements文件路径
         :return:
         """
         dst_path = Path(dst_path)
@@ -205,6 +221,10 @@ class MobileProvisionModel(object):
         :return:
         """
         Path(dst_plist_path).open("w").write(self.xml_content)
+
+    # def is_support_valid_cer(self, cer_sha256):
+    #     for tmp_cer_model in self.developer_certificates:
+    #         if not tmp_cer_model.is
 
 
 def content(file_path):

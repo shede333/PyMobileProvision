@@ -63,9 +63,9 @@ def test_cli_convert():
 
 def test_mp_property():
     from datetime import datetime
+    from datetime import timezone
 
     mp_model = MobileProvisionModel(SRC_MP_PATH)
-    now_date = datetime.now()
 
     assert mp_model["name"] == "iOS Team Provisioning Profile: xyz.shede333.testFirst"
     assert mp_model.app_id_name == "XC xyz shede333 testFirst"
@@ -75,13 +75,18 @@ def test_mp_property():
     assert mp_model.team_identifier == "RR23U62KET"
     assert mp_model.uuid == "5e3f9cc7-59d2-4cef-902b-97ba409e5874"
     assert isinstance(mp_model.entitlements, dict)
-    assert mp_model.creation_date == datetime(2019, 11, 19, 9, 27, 50)
-    assert mp_model.expiration_date == datetime(2019, 11, 26, 9, 27, 50)
-    assert mp_model.date_is_valid == (now_date < mp_model.expiration_date)
     assert mp_model.app_id_prefix == "RR23U62KET"
     assert mp_model.app_id() == "xyz.shede333.testFirst"
     assert mp_model.app_id(is_need_prefix=True) == "RR23U62KET.xyz.shede333.testFirst"
     assert mp_model.contain_device_id("00008020-0009306C1429002E")
+
+    assert mp_model.creation_date == datetime(2019, 11, 19, 9, 27, 50)
+    assert mp_model.expiration_date == datetime(2019, 11, 26, 9, 27, 50)
+    assert mp_model.date_is_valid == (datetime.utcnow() < mp_model.expiration_date)
+    utc_dt = mp_model.creation_date.replace(tzinfo=timezone.utc)
+    assert utc_dt.strftime("%Y-%m-%d %H:%M:%S") == "2019-11-19 09:27:50"
+    local_dt = mp_model.creation_date.replace(tzinfo=timezone.utc).astimezone()
+    assert local_dt.strftime("%Y-%m-%d %H:%M:%S") == "2019-11-19 17:27:50"
 
     import tempfile
     with tempfile.TemporaryDirectory() as dir_path:
@@ -96,8 +101,6 @@ def test_mp_property():
 
     assert len(mp_model.developer_certificates) == 2
     cer_model = mp_model.developer_certificates[0]
-    print(type(cer_model.sha256), cer_model.sha256)
-    print(type(cer_model.sha1), cer_model.sha1)
     assert cer_model.common_name == "iPhone Developer: 333wshw@163.com (6EWWJK58A9)"
     assert cer_model.sha256 == "122F041D0C659348CC9CB1C1CBC6A60BBB3C8184D9261C73F117DBE785F9AA20"
     assert cer_model.sha1 == "38C56BC325AF693E16E8B4C17CAAB50982868C32"

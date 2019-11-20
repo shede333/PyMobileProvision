@@ -14,15 +14,27 @@ def import_mp(file_path, delete_repeat_name):
 
 
 def parse_mp(file_path):
-    from mobileprovision import parser
-    import pprint
-    plist_obj = parser.plist_obj(file_path)
-    pprint.pprint(plist_obj)
+    from mobileprovision.parser import MobileProvisionModel
+    mp_model = MobileProvisionModel(file_path)
+    print(mp_model)
 
 
 def convert_mp(file_path, dst_plist_path):
-    from mobileprovision import parser
-    parser.convert_plist_file(file_path, dst_plist_path)
+    from mobileprovision.parser import MobileProvisionModel
+    MobileProvisionModel(file_path).convert_to_plist_file(dst_plist_path)
+
+
+def entitlements(file_path, is_print, output_path):
+    from mobileprovision.parser import MobileProvisionModel
+    mp_model = MobileProvisionModel(file_path)
+    if is_print:
+        import pprint
+        print("\nprint entitlements info:")
+        pprint.pprint(mp_model.entitlements, indent=2)
+    if output_path:
+        mp_model.export_entitlements_file(output_path)
+        print("\n* success export to: {}".format(output_path))
+    print()
 
 
 def parse_arg():
@@ -44,6 +56,12 @@ def parse_arg():
     convert_mp_parser.set_defaults(func=convert_mp)
     convert_mp_parser.add_argument("file_path", help="mobileprovision文件路径")
     convert_mp_parser.add_argument("dst_plist_path", help="转换后的plist文件路径")
+
+    entitlements_parser = subparsers.add_parser("entitlements", help="打印/导出 mobileprovision文件里 entitlements信息")
+    entitlements_parser.set_defaults(func=entitlements)
+    entitlements_parser.add_argument("file_path", help="mobileprovision文件路径")
+    entitlements_parser.add_argument("-p", "--print", dest="is_print",action="store_true", help="打印entitlements信息")
+    entitlements_parser.add_argument("-o", "--output-path", help="entitlements文件导出路径")
 
     args = parser.parse_args()
     return args
