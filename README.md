@@ -84,3 +84,5 @@ optional arguments:
 * ~~增加pytest标准测试；~~
 * ~~增加mp等测试资源；~~
 * ~~增加CLI控制功能；~~
+* DevCertificateModel增加创建、失效日期属性
+* 将日期属性，改为时间戳，避免UTC歧义

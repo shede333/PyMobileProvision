@@ -173,7 +173,6 @@ class MobileProvisionModel(object):
             dev_cer_list = []
             for tmp_cer_data in original_list:
                 cer_obj = x509.load_der_x509_certificate(tmp_cer_data, backend)
-                print(type(cer_obj.not_valid_after), cer_obj.not_valid_after)
                 dev_cer_list.append(DevCertificateModel(cer_obj))
             self._dev_cer_list = dev_cer_list
 

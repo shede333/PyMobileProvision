@@ -38,7 +38,7 @@ def entitlements(file_path, is_print, output_path):
 
 def parse_arg():
     """解析命令行的输入的参数"""
-    parser = argparse.ArgumentParser("OKEx工程里的多语言国际化相关的便捷操作")
+    parser = argparse.ArgumentParser("解析mobileprovision文件")
     subparsers = parser.add_subparsers(help="支持的命令如下：")
 
     import_mp_parser = subparsers.add_parser("import", help="导入mobileprovision文件到系统默认路径里")
