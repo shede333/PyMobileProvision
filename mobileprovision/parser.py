@@ -85,7 +85,8 @@ class MobileProvisionModel(object):
 
     def __init__(self, file_path):
         """Constructor for MobileProvisionModel"""
-        self.xml_content = content(file_path)
+        self.file_path = Path(file_path)
+        self.xml_content = content(self.file_path)
         self._origin_info = plistlib.loads(bytes(self.xml_content, encoding="ascii"))
         # 将key转为小写
         self._dict_info = {k.lower(): v for k, v in self._origin_info.items()}
