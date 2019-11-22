@@ -81,13 +81,15 @@ def test_mp_property():
     assert mp_model.app_id(is_need_prefix=True) == "RR23U62KET.xyz.shede333.testFirst"
     assert mp_model.contain_device_id("00008020-0009306C1429002E")
 
-    assert mp_model.creation_date == datetime(2019, 11, 19, 9, 27, 50)
-    assert mp_model.expiration_date == datetime(2019, 11, 26, 9, 27, 50)
-    assert mp_model.date_is_valid == (datetime.utcnow() < mp_model.expiration_date)
-    utc_dt = mp_model.creation_date.replace(tzinfo=timezone.utc)
+    assert mp_model.creation_timestamp == datetime(2019, 11, 19, 9, 27, 50).replace(
+        tzinfo=timezone.utc).timestamp()
+    assert mp_model.expiration_timestamp == datetime(2019, 11, 26, 9, 27, 50).replace(
+        tzinfo=timezone.utc).timestamp()
+    assert mp_model.date_is_valid() == (datetime.utcnow().timestamp() < mp_model.expiration_timestamp)
+    utc_dt = datetime.fromtimestamp(mp_model.creation_timestamp, tz=timezone.utc)
     assert utc_dt.strftime("%Y-%m-%d %H:%M:%S") == "2019-11-19 09:27:50"
     tz_8h = timezone(timedelta(hours=8))  # 东八区
-    local_dt = mp_model.creation_date.replace(tzinfo=timezone.utc).astimezone(tz_8h)
+    local_dt = utc_dt.astimezone(tz_8h)
     assert local_dt.strftime("%Y-%m-%d %H:%M:%S") == "2019-11-19 17:27:50"
 
     import tempfile
@@ -106,3 +108,7 @@ def test_mp_property():
     assert cer_model.common_name == "iPhone Developer: 333wshw@163.com (6EWWJK58A9)"
     assert cer_model.sha256 == "122F041D0C659348CC9CB1C1CBC6A60BBB3C8184D9261C73F117DBE785F9AA20"
     assert cer_model.sha1 == "38C56BC325AF693E16E8B4C17CAAB50982868C32"
+    assert cer_model.not_valid_before == datetime(2019, 5, 21, 4, 28, 15).replace(
+        tzinfo=timezone.utc).timestamp()
+    assert cer_model.not_valid_after == datetime(2020, 5, 20, 4, 28, 15).replace(
+        tzinfo=timezone.utc).timestamp()

@@ -6,7 +6,8 @@ __author__ = 'shede333'
 
 import plistlib
 import re
-
+from datetime import datetime
+from datetime import timezone
 from pathlib import Path
 
 
@@ -53,6 +54,31 @@ class DevCertificateModel(object):
             self._sha1 = self.x509_cer.fingerprint(SHA1()).hex().upper()
         return self._sha1
 
+    @property
+    def not_valid_before(self):
+        """
+        证书在此日期前 无效
+        :return: UTC时间戳，int值
+        """
+        dt = self.x509_cer.not_valid_before.replace(tzinfo=timezone.utc)
+        return dt.timestamp()
+
+    @property
+    def not_valid_after(self):
+        """
+        证书在此日期后 无效
+        :return: UTC时间戳，int值
+        """
+        dt = self.x509_cer.not_valid_after.replace(tzinfo=timezone.utc)
+        return dt.timestamp()
+
+    def date_is_valid(self):
+        """
+        证书现在是否在有效日期范围内
+        :return: 有效则返回true
+        """
+        return self.not_valid_before < datetime.utcnow().timestamp() < self.not_valid_after
+
 
 class MobileProvisionModel(object):
     """解析出'.mobileprovision'文件信息的model对象"""
@@ -71,7 +97,6 @@ class MobileProvisionModel(object):
 
     def __repr__(self):
         import pprint
-        import copy
         tmp_dict = dict(self._origin_info)
         tmp_dict["DeveloperCertificates"] = self.developer_certificates
 
@@ -131,28 +156,22 @@ class MobileProvisionModel(object):
         return self["Entitlements"]
 
     @property
-    def creation_date(self):
+    def creation_timestamp(self):
         """
-        :return: 证书的有效起始时间（datetime对象, UTC时间）
+        证书的有效起始时间
+        :return: UTC时间戳，int值
         """
-        return self["CreationDate"]
+        dt_utc = self["CreationDate"].replace(tzinfo=timezone.utc)
+        return dt_utc.timestamp()
 
     @property
-    def expiration_date(self):
+    def expiration_timestamp(self):
         """
-        :return: 证书的有效截止时间（datetime对象, UTC时间）
+        证书的有效截止时间
+        :return: UTC时间戳，int值
         """
-        return self["ExpirationDate"]
-
-    @property
-    def date_is_valid(self):
-        """
-        是否在有效日期范围内
-        :return: 有效则返回true
-        """
-        from datetime import datetime
-        now_date = datetime.utcnow()
-        return (now_date > self.creation_date) and (now_date < self.expiration_date)
+        dt_utc = self["ExpirationDate"].replace(tzinfo=timezone.utc)
+        return dt_utc.timestamp()
 
     @property
     def app_id_prefix(self):
@@ -177,6 +196,13 @@ class MobileProvisionModel(object):
             self._dev_cer_list = dev_cer_list
 
         return self._dev_cer_list
+
+    def date_is_valid(self):
+        """
+        文件现在是否在有效日期范围内
+        :return: 有效则返回true
+        """
+        return self.creation_timestamp < datetime.utcnow().timestamp() < self.expiration_timestamp
 
     def app_id(self, is_need_prefix=False):
         """

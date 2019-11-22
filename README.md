@@ -28,13 +28,13 @@ print(mp_model)  # 打印mobileprovision文件的详细信息
 print(mp_model.app_id_prefix)  # appID的前缀
 print(mp_model.app_id(is_need_prefix=True))  # app的BundleID，带app_id_prefix前缀
 print(mp_model["name"])  # mobileprovision的"Name"属性（属性不区分大小写）
-print(mp_model.date_is_valid)  # 现在的是否过期
-print(mp_model.creation_date)  # 证书创建时间（UTC）
+print(mp_model.date_is_valid())  # 现在的是否过期
+print(mp_model.creation_timestamp)  # 证书创建时间（时间戳，int值）
 # ......还有很多其他属性.......
 
-# 将UTC时间 转换为 本地日期时间
-from datetime import timezone
-local_dt = mp_model.creation_date.replace(tzinfo=timezone.utc).astimezone()
+# 将int时间戳 转换为 本地日期时间
+from datetime import datetime
+local_dt = datetime.fromtimestamp(mp_model.creation_timestamp)
 print(local_dt)  
 
 # 打印mobileprovision文件里包含的cer公钥证书信息
@@ -84,5 +84,5 @@ optional arguments:
 * ~~增加pytest标准测试；~~
 * ~~增加mp等测试资源；~~
 * ~~增加CLI控制功能；~~
-* DevCertificateModel增加创建、失效日期属性
-* 将日期属性，改为时间戳，避免UTC歧义
+* ~~DevCertificateModel增加创建、失效日期属性~~；
+* ~~将日期属性，改为时间戳，避免UTC歧义~~；
