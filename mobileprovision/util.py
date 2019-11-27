@@ -50,8 +50,8 @@ def import_mobileprovision(mp_file_path, replace_at_attrs=('Name',)):
                 current_value = mp_model[tmp_key]
                 if tmp_value and current_value and (tmp_value == current_value):
                     has_same_attr = True
+                    print("\t- 删除文件({}: {}): {}".format(tmp_key, tmp_value, file_path))
                     file_path.unlink()
-                    print("\t- 删除文件:", file_path)
 
         if not has_same_attr:
             print("\t* 没有相同属性({})的mobileprovision文件".format(replace_at_attrs))
