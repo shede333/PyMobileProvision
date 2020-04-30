@@ -106,7 +106,7 @@ class MobileProvisionModel(object):
     @property
     def app_id_name(self):
         """
-        Apple开发者中心里，创建此mobileprovision文件时，选中的"Identifiers"的名称
+        Apple开发者中心里，创建此mobileprovision文件时，选中的"Identifiers"的名称，注意：是ID的名称
         :return:
         """
         return self["AppIDName"]
@@ -162,8 +162,7 @@ class MobileProvisionModel(object):
         证书的有效起始时间
         :return: UTC时间戳，int值
         """
-        dt_utc = self["CreationDate"].replace(tzinfo=timezone.utc)
-        return dt_utc.timestamp()
+        return self["CreationDate"].timestamp()
 
     @property
     def expiration_timestamp(self):
@@ -171,8 +170,7 @@ class MobileProvisionModel(object):
         证书的有效截止时间
         :return: UTC时间戳，int值
         """
-        dt_utc = self["ExpirationDate"].replace(tzinfo=timezone.utc)
-        return dt_utc.timestamp()
+        return self["ExpirationDate"].timestamp()
 
     @property
     def app_id_prefix(self):

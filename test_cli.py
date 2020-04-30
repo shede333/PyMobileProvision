@@ -81,12 +81,11 @@ def test_mp_property():
     assert mp_model.app_id(is_need_prefix=True) == "RR23U62KET.xyz.shede333.testFirst"
     assert mp_model.contain_device_id("00008020-0009306C1429002E")
 
-    assert mp_model.creation_timestamp == datetime(2019, 11, 19, 9, 27, 50).replace(
-        tzinfo=timezone.utc).timestamp()
-    assert mp_model.expiration_timestamp == datetime(2019, 11, 26, 9, 27, 50).replace(
-        tzinfo=timezone.utc).timestamp()
+    assert mp_model.creation_timestamp == datetime(2019, 11, 19, 9, 27, 50).timestamp()
+    assert mp_model.expiration_timestamp == datetime(2019, 11, 26, 9, 27, 50).timestamp()
     assert mp_model.date_is_valid() == (datetime.utcnow().timestamp() < mp_model.expiration_timestamp)
-    utc_dt = datetime.fromtimestamp(mp_model.creation_timestamp, tz=timezone.utc)
+    # utc_dt = datetime.fromtimestamp(mp_model.creation_timestamp, tz=timezone.utc)
+    utc_dt = datetime(2019, 11, 19, 9, 27, 50).replace(tzinfo=timezone.utc)
     assert utc_dt.strftime("%Y-%m-%d %H:%M:%S") == "2019-11-19 09:27:50"
     tz_8h = timezone(timedelta(hours=8))  # 东八区
     local_dt = utc_dt.astimezone(tz_8h)
