@@ -15,7 +15,7 @@ README = Path(__file__).resolve().with_name("README.md").read_text()
 
 setup(
     name='PyMobileProvision',  # 包名字
-    version='1.2.2',  # 包版本
+    version='1.3',  # 包版本
     author='shede333',  # 作者
     author_email='333wshw@163.com',  # 作者邮箱
     keywords='mobileprovision mobile provision MobileProvision profile profiles',
@@ -29,7 +29,7 @@ setup(
             'mobileprovision=mobileprovision.command:main',
         ],
     },
-    install_requires=['cryptography~=2.8'],
+    install_requires=['cryptography'],
     python_requires="~=3.6",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
