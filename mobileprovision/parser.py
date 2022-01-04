@@ -95,7 +95,7 @@ class MobileProvisionModel(object):
         else:
             self.file_path = None
             file_content = file_path_or_text
-        self.xml_content = content(file_content)
+        self.xml_content = xml_from_mp_text(file_content)
         self._origin_info = plistlib.loads(bytes(self.xml_content, encoding="ascii"))
         # 将key转为小写
         self._dict_info = {k.lower(): v for k, v in self._origin_info.items()}
