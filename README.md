@@ -11,6 +11,7 @@ parse ".mobileprovision" file in MacOS System;
 
 ```
 
+# 注意：pip要用最新的（version>=21.0），否则，在安装cryptography依赖包时会失败
 pip install PyMobileProvision
 
 ```
@@ -23,6 +24,11 @@ from mobileprovision import MobileProvisionModel
 
 mp_file_path = "/Users/shede333/Desktop/test.mobileprovision"
 mp_model = MobileProvisionModel(mp_file_path)
+
+# 也支持直接使用mobileprovision文件内容来创建model，AppStore Connect API一般会需要这种情况：
+# from pathlib import Path
+# file_content = Path(mp_file_path).read_text(encoding="ascii", errors="ignore")
+# mp_model = MobileProvisionModel(file_content)
 
 print(mp_model)  # 打印mobileprovision文件的详细信息
 print(mp_model.app_id_prefix)  # appID的前缀

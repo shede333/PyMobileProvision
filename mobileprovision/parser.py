@@ -83,10 +83,19 @@ class DevCertificateModel(object):
 class MobileProvisionModel(object):
     """解析出'.mobileprovision'文件信息的model对象"""
 
-    def __init__(self, file_path):
-        """Constructor for MobileProvisionModel"""
-        self.file_path = Path(file_path)
-        self.xml_content = content(self.file_path)
+    def __init__(self, file_path_or_text):
+        """
+        初始化方法
+        :param file_path_or_text: 文件路径/文件内容
+        """
+        tmp_file_path = Path(file_path_or_text)
+        if tmp_file_path.is_file():
+            self.file_path = tmp_file_path
+            file_content = tmp_file_path.read_text(encoding="ascii", errors="ignore")
+        else:
+            self.file_path = None
+            file_content = file_path_or_text
+        self.xml_content = content(file_content)
         self._origin_info = plistlib.loads(bytes(self.xml_content, encoding="ascii"))
         # 将key转为小写
         self._dict_info = {k.lower(): v for k, v in self._origin_info.items()}
@@ -251,6 +260,23 @@ class MobileProvisionModel(object):
     #         if not tmp_cer_model.is
 
 
+def xml_from_mp_text(mp_text: str):
+    """
+    从mobileprovision文件内容里，提取出plist部分的字符串；
+    效果如同以下命令：
+        security cms -D -i embedded.mobileprovision > temp.plist
+
+    :param mp_text: mobileprovision文件内容
+    :return: plist部分的字符串内容
+    """
+    p_start = re.escape("<?xml")
+    p_end = re.escape("</plist>")
+    pattern_str = f"{p_start}.+{p_end}"
+    result = re.search(pattern_str, mp_text, flags=re.DOTALL)
+    xml_content = result.group()
+    return xml_content
+
+
 def content(file_path):
     """
     从mobileprovision文件里提取出plist部分的字符串内容；
@@ -260,13 +286,8 @@ def content(file_path):
     :param file_path: mobileprovision文件路径
     :return: plist部分的字符串内容
     """
-    p_start = re.escape("<?xml")
-    p_end = re.escape("</plist>")
-    pattern_str = "{}.+{}".format(p_start, p_end)
     file_content = Path(file_path).read_text(encoding="ascii", errors="ignore")
-    result = re.search(pattern_str, file_content, flags=re.DOTALL)
-    xml_content = result.group()
-    return xml_content
+    return xml_from_mp_text(file_content)
 
 
 def plist_obj(file_path):
