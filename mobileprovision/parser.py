@@ -210,8 +210,8 @@ class MobileProvisionModel(object):
         文件现在是否在有效日期范围内
         :return: 有效则返回true
         """
-        # 由于本地时间和服务端时间有偏差，特别是profile刚创建完的时候，起始时间兼容 60秒 误差
-        start_is_valid = (datetime.utcnow().timestamp() - self.creation_timestamp) > -60
+        # 由于本地时间和服务端时间有偏差，特别是profile刚创建完的时候，起始时间兼容 180秒 误差
+        start_is_valid = (datetime.utcnow().timestamp() - self.creation_timestamp) > -180
         return start_is_valid and (datetime.utcnow().timestamp() < self.expiration_timestamp)
 
     def app_id(self, is_need_prefix=False):
